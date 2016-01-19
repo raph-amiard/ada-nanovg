@@ -28,6 +28,4 @@ package body Main_Support is
       end if;
    end Key_Changed;
 
-begin
-   Glfw.Errors.Set_Callback (Error_Callback'Access);
 end Main_Support;
