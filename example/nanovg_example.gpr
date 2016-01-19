@@ -1,0 +1,9 @@
+with "../ada_nanovg.gpr";
+
+project Nanovg_Example is
+   for Languages use ("Ada");
+   for Source_Dirs use (".");
+   for Object_Dir use "obj";
+   for Main use ("main.adb");
+   GLFW_Version_Type := "3";
+end Nanovg_Example;

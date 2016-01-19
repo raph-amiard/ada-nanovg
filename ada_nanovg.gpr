@@ -1,0 +1,8 @@
+with "OpenGLAda/opengl-glfw.gpr";
+
+project Ada_Nanovg is
+   for Languages use ("Ada", "C");
+   for Source_Dirs use ("src", "nanovg/src");
+   for Object_Dir use "obj";
+   GLFW_Version_Type := "3";
+end Ada_Nanovg;

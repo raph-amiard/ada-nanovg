@@ -1,0 +1,6 @@
+obj
+*.ali
+*.swp
+*.swo
+nanovg
+OpenGLAda
