@@ -97,18 +97,34 @@ package Ada_NanoVG is
    procedure End_Frame (Ctx : access NVG_Context);
    pragma Import (C, End_Frame, "nvgEndFrame");
 
+   subtype Color_Range is float range 0.0 .. 1.0;
+
    function RGB
-     (r : float;
-      g : float;
-      b : float) return NVG_Color;
+     (r : Color_Range;
+      g : Color_Range;
+      b : Color_Range) return NVG_Color;
    pragma Import (C, RGB, "nvgRGBf");
 
    function RGBA
-     (r : float;
-      g : float;
-      b : float;
-      a : float) return NVG_Color;
+     (r : Color_Range;
+      g : Color_Range;
+      b : Color_Range;
+      a : Color_Range) return NVG_Color;
    pragma Import (C, RGBA, "nvgRGBAf");
+
+   function RGB
+     (r : Unsigned_8;
+      g : Unsigned_8;
+      b : Unsigned_8) return NVG_Color
+     with Import => True, Convention => C, External_Name => "nvgRGB";
+
+   function RGBA
+     (r : Unsigned_8;
+      g : Unsigned_8;
+      b : Unsigned_8;
+      a : Unsigned_8) return NVG_Color
+   with Import => True, Convention => C, External_Name => "nvgRGBA";
+
 
    function Lerp_RGBA
      (c0 : NVG_Color;
