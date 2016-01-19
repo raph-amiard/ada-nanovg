@@ -1,17 +1,14 @@
-pragma Ada_2005;
 pragma Style_Checks (Off);
 
 with Interfaces.C; use Interfaces.C;
 with Interfaces.C.Strings;
 with System;
 with C_Flags_Helpers;
+with Interfaces; use Interfaces;
 
 package Ada_NanoVG is
 
    type Create_Flags_Enum is (Antialias, Stencil_Strokes, Debug);
-   for Create_Flags_Enum use (Antialias       => 2 ** 0,
-                              Stencil_Strokes => 2 ** 1,
-                              Debug           => 2 ** 2);
    type NVG_Create_Flags is array (Create_Flags_Enum) of Boolean;
 
    type NVG_Context is null record;

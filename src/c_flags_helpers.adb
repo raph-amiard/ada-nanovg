@@ -9,7 +9,11 @@ package body C_Flags_Helpers is
 
       for Enum_Val in Enum'Range loop
          if Opts (Enum_Val) then
-            Result := Result or Enum'Pos (Enum_Val);
+            declare
+               M : unsigned := 2 ** Enum'Pos (Enum_Val);
+            begin
+               Result := Result or M;
+            end;
          end if;
       end loop;
 
