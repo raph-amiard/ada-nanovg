@@ -16,7 +16,7 @@ package body Main_Support is
    -- Key_Changed --
    -----------------
 
-   procedure Key_Changed (Object   : not null access Test_Window;
+   procedure Key_Changed (Object   : not null access Simple_Window;
                           Key      : Input.Keys.Key;
                           Scancode : Input.Keys.Scancode;
                           Action   : Input.Keys.Action;

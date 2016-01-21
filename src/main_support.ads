@@ -6,11 +6,11 @@ with Glfw.Errors;
 
 package Main_Support is
 
-   type Test_Window is new Glfw.Windows.Window with record
+   type Simple_Window is new Glfw.Windows.Window with record
       Blow_Up : Boolean := False;
    end record;
 
-   procedure Key_Changed (Object   : not null access Test_Window;
+   procedure Key_Changed (Object   : not null access Simple_Window;
                           Key      : Input.Keys.Key;
                           Scancode : Input.Keys.Scancode;
                           Action   : Input.Keys.Action;
