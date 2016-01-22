@@ -21,6 +21,8 @@ package Ada_NanoVG is
    end record;
    pragma Convention (C_Pass_By_Copy, NVG_Color);
 
+   No_Color : constant NVG_Color := (0.0, 0.0, 0.0, 0.0);
+
    type NVG_Paint_XForm_Array is array (0 .. 5) of aliased float;
    type NVG_Paint_Extent_Array is array (0 .. 1) of aliased float;
    type NVG_Paint is record
