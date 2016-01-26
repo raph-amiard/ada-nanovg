@@ -1,21 +1,20 @@
-with Glfw; use Glfw;
-with Glfw.Input;
-with Glfw.Input.Keys;
-with Glfw.Windows;
-with Glfw.Errors;
+with Ada_NanoVG; use Ada_NanoVG;
 
 package Main_Support is
 
-   type Simple_Window is new Glfw.Windows.Window with record
-      Blow_Up : Boolean := False;
-   end record;
+   function Init
+     (Width, Height         : out Natural;
+      Req_Width, Req_Height : Natural := 0) return access NVG_Context;
 
-   procedure Key_Changed (Object   : not null access Simple_Window;
-                          Key      : Input.Keys.Key;
-                          Scancode : Input.Keys.Scancode;
-                          Action   : Input.Keys.Action;
-                          Mods     : Input.Keys.Modifiers);
+   procedure Get_Cursor_Pos
+     (X, Y : out Integer);
 
-   procedure Error_Callback (Error : Glfw.Errors.Kind; Description : String);
+   function Should_Exit return Boolean;
+
+   procedure Set_Background_Color (Color : NVG_Color);
+
+   procedure Start_Frame;
+   procedure End_Frame;
+   procedure Poll_Events;
 
 end Main_Support;
