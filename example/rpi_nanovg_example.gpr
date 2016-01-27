@@ -1,0 +1,9 @@
+with "../rpi_nanovg.gpr";
+
+project RPI_Nanovg_Example is
+   for Languages use ("Ada");
+   for Source_Dirs use (".");
+   for Object_Dir use "obj";
+   for Main use ("main.adb");
+   package Linker renames Rpi_Nanovg.Linker;
+end RPI_Nanovg_Example;
