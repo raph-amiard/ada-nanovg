@@ -25,15 +25,24 @@ package body Main_Support is
       Blow_Up : Boolean := False;
    end record;
 
-   procedure Key_Changed (Object   : not null access Simple_Window;
-                          Key      : Input.Keys.Key;
-                          Scancode : Input.Keys.Scancode;
-                          Action   : Input.Keys.Action;
-                          Mods     : Input.Keys.Modifiers);
+   overriding procedure Key_Changed
+     (Object   : not null access Simple_Window;
+      Key      : Input.Keys.Key;
+      Scancode : Input.Keys.Scancode;
+      Action   : Input.Keys.Action;
+      Mods     : Input.Keys.Modifiers);
 
-   W : aliased Main_Support.Simple_Window;
+   overriding procedure Mouse_Button_Changed
+     (Object  : not null access Simple_Window;
+      Button  : Input.Mouse.Button;
+      State   : Input.Button_State;
+      Mods    : Input.Keys.Modifiers);
+
+
+   W                : aliased Main_Support.Simple_Window;
    Background_Color : NVG_Color;
    Ctx              : access NVG_Context;
+   Mouse_Clicked_CB : Mouse_Clicked_Callback_Type;
 
    procedure Error_Callback (Error : Glfw.Errors.Kind; Description : String);
 
@@ -61,6 +70,25 @@ package body Main_Support is
          Object.Set_Should_Close (True);
       end if;
    end Key_Changed;
+
+   --------------------------
+   -- Mouse_Button_Changed --
+   --------------------------
+
+   overriding procedure Mouse_Button_Changed
+     (Object  : not null access Simple_Window;
+      Button  : Input.Mouse.Button;
+      State   : Input.Button_State;
+      Mods    : Input.Keys.Modifiers)
+   is
+      X, Y : Input.Mouse.Coordinate;
+      use type Input.Button_State;
+   begin
+      if State = Input.Pressed then
+         Object.Get_Cursor_Pos (X, Y);
+         Mouse_Clicked_CB (Integer (X), Integer (Y));
+      end if;
+   end Mouse_Button_Changed;
 
    ----------
    -- Init --
@@ -95,6 +123,8 @@ package body Main_Support is
       Height := Natural (RH);
 
       GL.Window.Set_Viewport (0, 0, GL.Types.Size (RW), GL.Types.Size (RH));
+      W.Enable_Callback (Callbacks.Key);
+      W.Enable_Callback (Callbacks.Mouse_Button);
       return Ctx;
    end Init;
 
@@ -160,6 +190,7 @@ package body Main_Support is
       End_Frame (Ctx);
       Enable (GL.Toggles.Depth_Test);
       Swap_Buffers (W'Access);
+      delay 0.01;
    end End_Frame;
 
    -----------------
@@ -170,5 +201,15 @@ package body Main_Support is
    begin
       Glfw.Input.Poll_Events;
    end Poll_Events;
+
+   --------------------------------
+   -- Set_Mouse_Clicked_Callback --
+   --------------------------------
+
+   procedure Set_Mouse_Clicked_Callback (CB : Mouse_Clicked_Callback_Type)
+   is
+   begin
+      Mouse_Clicked_CB := CB;
+   end Set_Mouse_Clicked_Callback;
 
 end Main_Support;

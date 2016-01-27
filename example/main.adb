@@ -10,6 +10,7 @@ procedure Main is
    Ctx                 : access NVG_Context;
 begin
    Ctx := Init (Width, Height, 800, 600);
+   Set_Background_Color (RGBA (0, 0, 0, 255));
 
    while not Should_Exit loop
 

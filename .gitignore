@@ -4,3 +4,4 @@ obj
 *.swo
 nanovg
 OpenGLAda
+ada-mouseread/obj
