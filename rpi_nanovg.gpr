@@ -1,0 +1,18 @@
+with "ada-mouseread/adamouse.gpr";
+
+project Rpi_Nanovg is
+   for Languages use ("Ada", "C");
+   for Source_Dirs use ("src", "nanovg/src", "rpi-src");
+   for Object_Dir use "obj";
+
+   package Compiler is
+      for Default_Switches ("C") use
+         ("-I/opt/vc/include", "-I/opt/vc/include/interface/vcos/pthreads");
+   end Compiler;
+
+   package Linker is
+      for Default_Switches ("Ada") use ("-L/opt/vc/lib", "-lEGL", "-lm", "-lGLESv2", "-lbcm_host", "-lX11");
+      for Default_Switches ("C") use ("-L/opt/vc/lib", "-lEGL", "-lm", "-lGLESv2", "-lbcm_host", "-lX11");
+      for Linker_Options use ("-L/opt/vc/lib", "-lEGL", "-lm", "-lGLESv2", "-lbcm_host", "-lX11");
+   end Linker;
+end Rpi_Nanovg;
