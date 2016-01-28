@@ -17,7 +17,7 @@ with Glfw.Input.Keys;
 with Glfw.Windows;
 with Glfw.Errors;
 with Interfaces.C;
-
+with Ada.Containers.Vectors;
 
 package body Main_Support is
 
@@ -38,11 +38,13 @@ package body Main_Support is
       State   : Input.Button_State;
       Mods    : Input.Keys.Modifiers);
 
+   overriding procedure Mouse_Position_Changed
+     (Object : not null access Simple_Window;
+      X, Y   : Input.Mouse.Coordinate);
 
    W                : aliased Main_Support.Simple_Window;
    Background_Color : NVG_Color;
    Ctx              : access NVG_Context;
-   Mouse_Clicked_CB : Mouse_Clicked_Callback_Type;
 
    procedure Error_Callback (Error : Glfw.Errors.Kind; Description : String);
 
@@ -83,11 +85,14 @@ package body Main_Support is
    is
       X, Y : Input.Mouse.Coordinate;
       use type Input.Button_State;
+      K : Mouse_Event_Kind :=
+        (case State is
+            when Input.Pressed => Pressed,
+            when Input.Released => Released);
    begin
-      if State = Input.Pressed then
-         Object.Get_Cursor_Pos (X, Y);
-         Mouse_Clicked_CB (Integer (X), Integer (Y));
-      end if;
+      Object.Get_Cursor_Pos (X, Y);
+      Mouse_Listeners_Stack.Last_Element.Mouse_Event
+        (K, Float (X), Float (Y));
    end Mouse_Button_Changed;
 
    ----------
@@ -125,6 +130,9 @@ package body Main_Support is
       GL.Window.Set_Viewport (0, 0, GL.Types.Size (RW), GL.Types.Size (RH));
       W.Enable_Callback (Callbacks.Key);
       W.Enable_Callback (Callbacks.Mouse_Button);
+      W.Enable_Callback (Callbacks.Mouse_Position);
+
+      Create_Font (Ctx, "sans", "Roboto-Regular.ttf");
       return Ctx;
    end Init;
 
@@ -202,14 +210,35 @@ package body Main_Support is
       Glfw.Input.Poll_Events;
    end Poll_Events;
 
-   --------------------------------
-   -- Set_Mouse_Clicked_Callback --
-   --------------------------------
+   ----------------
+   -- Take_Mouse --
+   ----------------
 
-   procedure Set_Mouse_Clicked_Callback (CB : Mouse_Clicked_Callback_Type)
-   is
+   procedure Take_Mouse (Listener : Mouse_Listener) is
    begin
-      Mouse_Clicked_CB := CB;
-   end Set_Mouse_Clicked_Callback;
+      Mouse_Listeners_Stack.Append (Listener);
+   end Take_Mouse;
+
+   ------------------
+   -- Return_Mouse --
+   ------------------
+
+   procedure Return_Mouse (Listener : Mouse_Listener) is
+   begin
+      pragma Assert (Listener = Mouse_Listeners_Stack.Last_Element);
+      Mouse_Listeners_Stack.Delete_Last;
+   end Return_Mouse;
+
+   ----------------------------
+   -- Mouse_Position_Changed --
+   ----------------------------
+
+   overriding procedure Mouse_Position_Changed
+     (Object : not null access Simple_Window;
+      X, Y   : Input.Mouse.Coordinate) is
+   begin
+      Mouse_Listeners_Stack.Last_Element.Mouse_Event
+        (Moved, Float (X), Float (Y));
+   end Mouse_Position_Changed;
 
 end Main_Support;

@@ -1,8 +1,21 @@
 with Ada_NanoVG; use Ada_NanoVG;
+with Ada.Containers.Vectors;
 
 package Main_Support is
 
-   type Mouse_Clicked_Callback_Type is access procedure (X, Y : Integer);
+   type Mouse_Event_Kind is (Pressed, Moved, Released);
+   type Mouse_Listener_Interface is interface;
+   type Mouse_Listener is access all Mouse_Listener_Interface'Class;
+
+   package Mouse_Listener_Vectors is
+     new Ada.Containers.Vectors (Natural, Mouse_Listener);
+
+   Mouse_Listeners_Stack : Mouse_Listener_Vectors.Vector;
+
+   procedure Mouse_Event
+     (Self : in out Mouse_Listener_Interface;
+      Kind : Mouse_Event_Kind;
+      X, Y : Float) is abstract;
 
    function Init
      (Width, Height         : out Natural;
@@ -13,7 +26,10 @@ package Main_Support is
    procedure Start_Frame;
    procedure End_Frame;
    procedure Poll_Events;
-   procedure Set_Mouse_Clicked_Callback (CB : Mouse_Clicked_Callback_Type);
+
+   procedure Take_Mouse (Listener : Mouse_Listener);
+   procedure Return_Mouse (Listener : Mouse_Listener);
+
    function Should_Exit return Boolean;
 
 end Main_Support;
