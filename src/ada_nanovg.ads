@@ -465,11 +465,10 @@ package Ada_NanoVG is
    procedure Stroke (Ctx : access NVG_Context);
    pragma Import (C, Stroke, "nvgStroke");
 
-   function Create_Font
+   procedure Create_Font
      (Ctx : access NVG_Context;
-      name : Interfaces.C.Strings.chars_ptr;
-      filename : Interfaces.C.Strings.chars_ptr) return int;
-   pragma Import (C, Create_Font, "nvgCreateFont");
+      Name : String;
+      Path : String);
 
    function Create_Font_Mem
      (Ctx : access NVG_Context;
@@ -485,8 +484,8 @@ package Ada_NanoVG is
    procedure Font_Size (Ctx : access NVG_Context; size : float);
    pragma Import (C, Font_Size, "nvgFontSize");
 
-   procedure Font_Blue (Ctx : access NVG_Context; blur : float);
-   pragma Import (C, Font_Blue, "nvgFontBlur");
+   procedure Font_Blur (Ctx : access NVG_Context; blur : float);
+   pragma Import (C, Font_Blur, "nvgFontBlur");
 
    procedure Text_Letter_Spacing (Ctx : access NVG_Context; spacing : float);
    pragma Import (C, Text_Letter_Spacing, "nvgTextLetterSpacing");
@@ -494,22 +493,19 @@ package Ada_NanoVG is
    procedure Text_Line_Height (Ctx : access NVG_Context; lineHeight : float);
    pragma Import (C, Text_Line_Height, "nvgTextLineHeight");
 
-   procedure Text_Align (Ctx : access NVG_Context; align : int);
+   procedure Text_Align (Ctx : access NVG_Context; align : unsigned);
    pragma Import (C, Text_Align, "nvgTextAlign");
 
    procedure Font_Face_Id (Ctx : access NVG_Context; font : int);
    pragma Import (C, Font_Face_Id, "nvgFontFaceId");
 
-   procedure Font_Face (Ctx : access NVG_Context; font : Interfaces.C.Strings.chars_ptr);
-   pragma Import (C, Font_Face, "nvgFontFace");
+   procedure Font_Face (Ctx : access NVG_Context; Font : String);
 
-   function Text
+   procedure Text
      (Ctx : access NVG_Context;
-      x : float;
-      y : float;
-      string : Interfaces.C.Strings.chars_ptr;
-      c_end : Interfaces.C.Strings.chars_ptr) return float;
-   pragma Import (C, Text, "nvgText");
+      X   : float;
+      Y   : float;
+      Str : String);
 
    procedure Text_Box
      (Ctx : access NVG_Context;
