@@ -22,11 +22,11 @@ package X11_X_h is
    --  unsupported macro: NoEventMask 0L
    --  unsupported macro: KeyPressMask (1L<<0)
    --  unsupported macro: KeyReleaseMask (1L<<1)
-   ButtonPressMask : constant := (2**2);
-   --  unsupported macro: ButtonReleaseMask (1L<<3)
+   ButtonPressMask   : constant := (2**2);
+   ButtonReleaseMask : constant := (2**3);
    --  unsupported macro: EnterWindowMask (1L<<4)
    --  unsupported macro: LeaveWindowMask (1L<<5)
-   --  unsupported macro: PointerMotionMask (1L<<6)
+   PointerMotionMask : constant := (2 ** 6);
    --  unsupported macro: PointerMotionHintMask (1L<<7)
    --  unsupported macro: Button1MotionMask (1L<<8)
    --  unsupported macro: Button2MotionMask (1L<<9)
@@ -47,9 +47,9 @@ package X11_X_h is
    --  unsupported macro: OwnerGrabButtonMask (1L<<24)
    --  unsupported macro: KeyPress 2
    --  unsupported macro: KeyRelease 3
-   --  unsupported macro: ButtonPress 4
-   --  unsupported macro: ButtonRelease 5
-   --  unsupported macro: MotionNotify 6
+   ButtonPress : constant := 4;
+   ButtonRelease : constant := 5;
+   MotionNotify : constant := 6;
    --  unsupported macro: EnterNotify 7
    --  unsupported macro: LeaveNotify 8
    --  unsupported macro: FocusIn 9

@@ -8,7 +8,6 @@ package body Main_Support is
    Ctx              : access NVG_Context;
    ML               : Mouse.Mouse_Listener;
    Mouse_X, Mouse_Y : Integer;
-   Mouse_Clicked_CB : Mouse_Clicked_Callback_Type;
 
    function C_Init (Width, Height : out Unsigned_32) return access NVG_Context;
    pragma Import (C, C_Init, "c_init");
@@ -88,28 +87,45 @@ package body Main_Support is
    procedure Poll_Events is
       Event : Mouse.Mouse_Event_Type := No_Mouse_Event;
    begin
-      select
-      Mouse.Mouse_Events.Dequeue (Event);
-      or delay 0.001;
-      end select;
-      if Event /= No_Mouse_Event then
-         Put_Line ("EVENT :" & Mouse.Dump_Event (Event));
+      loop
+         select
+         Mouse.Mouse_Events.Dequeue (Event);
+         or delay 0.001;
+         end select;
+
+         exit when Event = No_Mouse_Event;
+
          Mouse_X := Integer (Event.X);
          Mouse_Y := Integer (Event.Y);
-         Mouse_Clicked_CB (Mouse_X, Mouse_Y);
+         Mouse_Listeners_Stack.Last_Element.Mouse_Event
+           ((case Event.Kind is
+             when Pressed => Pressed,
+             when Moved => Moved,
+             when Released => Released,
+             when No_Event => raise Constraint_Error),
+            Float (Event.X), Float (Event.Y));
          Event := No_Mouse_Event;
-      end if;
+      end loop;
+
    end Poll_Events;
 
+   ----------------
+   -- Take_Mouse --
+   ----------------
 
-   --------------------------------
-   -- Set_Mouse_Clicked_Callback --
-   --------------------------------
-
-   procedure Set_Mouse_Clicked_Callback
-     (CB : Mouse_Clicked_Callback_Type) is
+   procedure Take_Mouse (Listener : Mouse_Listener) is
    begin
-      Mouse_Clicked_CB := CB;
-   end Set_Mouse_Clicked_Callback;
+      Mouse_Listeners_Stack.Append (Listener);
+   end Take_Mouse;
+
+   ------------------
+   -- Return_Mouse --
+   ------------------
+
+   procedure Return_Mouse (Listener : Mouse_Listener) is
+   begin
+      pragma Assert (Listener = Mouse_Listeners_Stack.Last_Element);
+      Mouse_Listeners_Stack.Delete_Last;
+   end Return_Mouse;
 
 end Main_Support;

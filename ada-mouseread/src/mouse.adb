@@ -6,6 +6,7 @@ with X11_Xlib_h;                use X11_Xlib_h;
 with X11_X_h;                   use X11_X_h;
 with System; use System;
 with Interfaces.C.Strings; use Interfaces.C.Strings;
+use Interfaces.C;
 
 package body Mouse is
 
@@ -19,19 +20,15 @@ package body Mouse is
       W        : X11_X_h.Window;
       Dummy    : Interfaces.C.int;
       Xev      : u_XEvent;
+      ME       : Mouse_Event_Type;
    begin
-      Put_Line ("FUFUFU");
       Display := XOpenDisplay (Null_Ptr);
-      Put_Line ("FUFUFU");
       W := Default_Root_Window (display);
-      Put_Line ("FUFUFU");
       Dummy := XAllowEvents (Display, AsyncBoth, CurrentTime);
-      Put_Line ("FUFUFU");
       Dummy := XGrabPointer
-        (Display, W, 1, ButtonPressMask, GrabModeAsync, GrabModeAsync,
-         None, None, CurrentTime);
-
-      Put_Line ("FUFUFU2");
+        (Display, W, 1,
+         ButtonPressMask or ButtonReleaseMask or PointerMotionMask,
+         GrabModeAsync, GrabModeAsync, None, None, CurrentTime);
 
       Put_Line ("Starting mouse listener !");
 
@@ -43,10 +40,18 @@ package body Mouse is
          end select;
 
          Dummy := XNextEvent (Display, Xev'Unrestricted_Access);
-         Mouse_Events.Enqueue
-           (Mouse_Event_Type'(Buttons_Pressed => (Left => True, others => False),
-                              X               => Integer (Xev.xbutton.x_root),
-                              Y               => Integer (Xev.xbutton.y_root)));
+         ME := Mouse_Event_Type'
+           (Buttons_Pressed => (Left => True, others => False),
+            X               => Integer (Xev.xbutton.x_root),
+            Y               => Integer (Xev.xbutton.y_root),
+            Kind            =>
+              (case Xev.xbutton.c_type is
+               when ButtonPress => Pressed,
+               when ButtonRelease => Released,
+               when MotionNotify => Moved,
+               when others => No_Event));
+         Mouse_Events.Enqueue (ME);
+         Put_Line (ME.Kind'Img);
       end loop;
 
       Put_Line ("Stopping mouse listener !");
